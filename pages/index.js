@@ -1,11 +1,11 @@
 import { useRouter } from 'next/router'
 import ResponsiveArticle from '../components/skeleton/ResponsiveArticle'
-import Infiniteblog from './../components/Infiniteblog'
+import Post from './../components/Post'
 import ImageComponentity from './../components/ImageComponentity'
 import Link from 'next/link'
 import { NextSeo } from 'next-seo'
 
-function Index() {
+function Index({ posts }) {
   const router = useRouter()
 
   // If the page is not yet generated, this will be displayed
@@ -75,9 +75,24 @@ function Index() {
           </a>
         </Link>
       </div>
-      <Infiniteblog />
+      {posts.map((postitem, i) => (
+        <Post post={postitem} />
+      ))}
     </>
   )
+}
+
+export async function getStaticProps() {
+  let args = '_embed=true'
+
+  const pageRes = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/posts?${args}`)
+  const posts = await pageRes.json()
+
+  return {
+    props: {
+      posts
+    }
+  }
 }
 
 export default Index
